@@ -1,0 +1,302 @@
+{
+  "name": "Customer Feedback Pro (Webhook)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "feedback",
+        "responseMode": "lastNode",
+        "options": {
+          "allowedOrigins": "*",
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": " Access-Control-Allow-Origin",
+                "value": "*"
+              },
+              {
+                "name": "Access-Control-Allow-Methods",
+                "value": "GET, POST, OPTIONS"
+              },
+              {
+                "name": "Access-Control-Allow-Methods",
+                "value": "Content-Type"
+              }
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [-176, -160],
+      "id": "c1205820-fcff-4442-a320-c729c5f15c31",
+      "name": "Webhook",
+      "webhookId": "0493274d-0466-4ea5-9f89-c6b26cea292c"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "type-filter-condition",
+              "leftValue": "={{ $json.body.type }}",
+              "rightValue": "rating",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [-80, -160],
+      "id": "filter-drop-rating-events",
+      "name": "Drop raw rating pings"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ef46a4e9-806c-4c12-a6d2-fea7d84132a1",
+              "leftValue": "={{ $json.body.rating }}",
+              "rightValue": 4,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [120, -160],
+      "id": "95eff6af-6305-4ba3-bdfd-8ba07209ac7f",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appd4mJHsGmT5Iar6",
+          "mode": "list",
+          "cachedResultName": "Customer Feedback Manager",
+          "cachedResultUrl": "https://airtable.com/appd4mJHsGmT5Iar6"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblHgf59r5ZQWWDXf",
+          "mode": "list",
+          "cachedResultName": "Customer Feedback",
+          "cachedResultUrl": "https://airtable.com/appd4mJHsGmT5Iar6/tblHgf59r5ZQWWDXf"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Sent to Review": false,
+            "Source": "QR",
+            "Customer Name": "={{ $json.body.name }}",
+            "Phone": "={{ $json.body.phone }}",
+            "Rating": "={{ $json.body.rating }}",
+            "Issue": "={{ Array.isArray($json.body.issues) && $json.body.issues.length > 0 ? $json.body.issues : [\"No Issue\"] }}",
+            "Feedback": "={{ $json.body.comment }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            { "id": "Customer Name", "displayName": "Customer Name", "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "string", "readOnly": false, "removed": false },
+            { "id": "Status", "displayName": "Status", "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "options", "options": [{"name":"New","value":"New"},{"name":"Contacted","value":"Contacted"},{"name":"Resolved","value":"Resolved"}], "readOnly": false, "removed": false },
+            { "id": "Phone", "displayName": "Phone", "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "string", "readOnly": false, "removed": false },
+            { "id": "Rating", "displayName": "Rating", "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "number", "readOnly": false, "removed": false },
+            { "id": "Issue", "displayName": "Issue", "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "array", "options": [{"name":"Timeliness","value":"Timeliness"},{"name":"Cleanliness","value":"Cleanliness"},{"name":"Driver Behaviour","value":"Driver Behaviour"},{"name":"Vehicle Condition","value":"Vehicle Condition"},{"name":"Pricing","value":"Pricing"},{"name":"Booking Process","value":"Booking Process"}], "readOnly": false, "removed": false },
+            { "id": "Feedback", "displayName": "Feedback", "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "string", "readOnly": false, "removed": false },
+            { "id": "Source", "displayName": "Source", "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "options", "options": [{"name":"QR","value":"QR"},{"name":"WhatsApp","value":"WhatsApp"},{"name":"Direct","value":"Direct"},{"name":"Website","value":"Website"}], "readOnly": false, "removed": false },
+            { "id": "Sent to Review", "displayName": "Sent to Review", "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "boolean", "readOnly": false, "removed": false },
+            { "id": "Created Time", "displayName": "Created Time", "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "string", "readOnly": true, "removed": true }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [320, -32],
+      "id": "4f289d83-6b85-439d-acd8-b8e16db193cf",
+      "name": "Create a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "Tqb44zNRBLyFARlc",
+          "name": "Airtable Personal Access Token account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appd4mJHsGmT5Iar6",
+          "mode": "list",
+          "cachedResultName": "Customer Feedback Manager",
+          "cachedResultUrl": "https://airtable.com/appd4mJHsGmT5Iar6"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblHgf59r5ZQWWDXf",
+          "mode": "list",
+          "cachedResultName": "Customer Feedback",
+          "cachedResultUrl": "https://airtable.com/appd4mJHsGmT5Iar6/tblHgf59r5ZQWWDXf"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Sent to Review": false,
+            "Source": "QR",
+            "Customer Name": "={{ $json.body.name }}",
+            "Phone": "={{ $json.body.phone }}",
+            "Rating": "={{ $json.body.rating }}",
+            "Issue": "={{ Array.isArray($json.body.issues) && $json.body.issues.length > 0 ? $json.body.issues : [\"No Issue\"] }}",
+            "Feedback": "={{ $json.body.comment }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            { "id": "Customer Name", "displayName": "Customer Name", "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "string", "readOnly": false, "removed": false },
+            { "id": "Status", "displayName": "Status", "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "options", "options": [{"name":"New","value":"New"},{"name":"Contacted","value":"Contacted"},{"name":"Resolved","value":"Resolved"}], "readOnly": false, "removed": false },
+            { "id": "Phone", "displayName": "Phone", "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "string", "readOnly": false, "removed": false },
+            { "id": "Rating", "displayName": "Rating", "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "number", "readOnly": false, "removed": false },
+            { "id": "Issue", "displayName": "Issue", "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "array", "options": [{"name":"Timeliness","value":"Timeliness"},{"name":"Cleanliness","value":"Cleanliness"},{"name":"Driver Behaviour","value":"Driver Behaviour"},{"name":"Vehicle Condition","value":"Vehicle Condition"},{"name":"Pricing","value":"Pricing"},{"name":"Booking Process","value":"Booking Process"}], "readOnly": false, "removed": false },
+            { "id": "Feedback", "displayName": "Feedback", "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "string", "readOnly": false, "removed": false },
+            { "id": "Source", "displayName": "Source", "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "options", "options": [{"name":"QR","value":"QR"},{"name":"WhatsApp","value":"WhatsApp"},{"name":"Direct","value":"Direct"},{"name":"Website","value":"Website"}], "readOnly": false, "removed": false },
+            { "id": "Sent to Review", "displayName": "Sent to Review", "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "boolean", "readOnly": false, "removed": false },
+            { "id": "Created Time", "displayName": "Created Time", "required": false, "defaultMatch": false, "canBeUsedToMatch": true, "display": true, "type": "string", "readOnly": true, "removed": true }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [320, -304],
+      "id": "26b1f57d-fe09-4152-8af5-bd5388f21984",
+      "name": "Create a record1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "Tqb44zNRBLyFARlc",
+          "name": "Airtable Personal Access Token account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "sahanawazrahman6@gmail.com",
+        "subject": "Negative Feedback",
+        "message": "=<h2 style=\"color:#e74c3c;\">🚨 Negative Feedback Alert</h2>\n\n<p><b>Customer:</b> {{ $json.fields['Customer Name'] }}</p>\n<p><b>Rating:</b> ⭐ {{ $json.fields.Rating }}</p>\n<p><b>Issue:</b> {{ $json.fields.Issue.join(\", \") }}</p>\n<p><b>Feedback:</b> {{ $json.fields.Feedback }}</p>\n<p><b>Call Now: :</b> {{ $json.fields.phone }}</p>\n<hr>\n\n<p style=\"color:#888;\">Sent from MB Car Rental Feedback System</p>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [592, -32],
+      "id": "236a5a14-d722-43c7-99e1-83ed91337689",
+      "name": "Send a message",
+      "webhookId": "b09bf7a0-5767-497b-a325-80ae87dfdb87",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "J0nDCYHf1C5EXJ55",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Drop raw rating pings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Drop raw rating pings": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a record": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Create a record1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "23dd563b-3b14-4c4d-aab3-8c34af8698a8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e1bf3c1f9c91f41065df0c00d27d8fd7d0579995b9760e748dce2009ba3fd035"
+  },
+  "id": "tE222w0YJwTvXSwb",
+  "tags": []
+}
