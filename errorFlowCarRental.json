@@ -1,0 +1,164 @@
+{
+  "name": "errorFlowCarRental",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "83158a9e-c0e0-47bf-8d2b-3ebece064b9f",
+      "name": "Error Trigger",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1_R0qwq44yR-H74C6XDfQM76sJ6cgW9aOfNBgOmNBQuE",
+          "mode": "list",
+          "cachedResultName": "Customer Feedback ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_R0qwq44yR-H74C6XDfQM76sJ6cgW9aOfNBgOmNBQuE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1685088724,
+          "mode": "list",
+          "cachedResultName": "errorHandling",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_R0qwq44yR-H74C6XDfQM76sJ6cgW9aOfNBgOmNBQuE/edit#gid=1685088724"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "execution",
+              "displayName": "execution",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "workflow",
+              "displayName": "workflow",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "3ce4c42c-f00d-43d9-8b86-390db9793aa5",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "lz5HdfP0UgiuVjCL",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "nxsolutions9@gmail.com",
+        "subject": "errorHandling MB Dibrugarh Car Rental Service",
+        "message": "=<h2>Workflow Error Alert</h2>\n<p><strong>Workflow:</strong> {{$json.workflow.name}}</p>\n<p><strong>Workflow ID:</strong> {{$json.workflow.id}}</p>\n<p><strong>Execution ID:</strong> {{$json.execution.id}}</p>\n<p><strong>Failed Node:</strong> {{$json.execution.lastNodeExecuted}}</p>\n<p><strong>Error Message:</strong> {{$json.execution.error.message}}</p>\n<p><strong>Retry Of:</strong> {{$json.execution.retryOf || 'N/A'}}</p>\n<p><strong>Execution URL:</strong> <a href=\"{{$json.execution.url}}\">{{$json.execution.url}}</a></p>\n\n<h3>Stack Trace</h3>\n<pre>{{$json.execution.error.stack || 'No stack trace available'}}</pre>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "4973e7f5-b41f-4225-9181-5a50fb4d1888",
+      "name": "Send a message",
+      "webhookId": "7ddf9f1e-5280-43c8-a3f1-9b111cdc1b66",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "J0nDCYHf1C5EXJ55",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Error Trigger": [
+      {
+        "json": {
+          "execution": {
+            "id": 231,
+            "url": "https://primary-production-4afef.up.railway.app/execution/workflow/1/231",
+            "retryOf": "34",
+            "error": {
+              "message": " Error Message",
+              "stack": "Stacktrace"
+            },
+            "lastNodeExecuted": "Node With Error",
+            "mode": "manual"
+          },
+          "workflow": {
+            "id": "1",
+            "name": "Example Workflow"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "4c2b59e4-3452-4d00-ba9f-c9b5725f94a2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e1bf3c1f9c91f41065df0c00d27d8fd7d0579995b9760e748dce2009ba3fd035"
+  },
+  "id": "Z80yABBBAhf3QI3V",
+  "tags": []
+}
